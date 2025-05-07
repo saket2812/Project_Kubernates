@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kiransaket-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kiransaket-backend
+  template:
+    metadata:
+      labels:
+        app: kiransaket-backend
+    spec:
+      containers:
+        - name: kiransaket-backend
+          image: docker.io/kiransaket/backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+           - name : BACKEND_URL
+             value: http://kiransaket-backend.default.svc.cluster.local:80
+
+           - name: MONGO_URL
+             value: mongodb://mongo.default.svc.cluster.local:27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kiransaket-backend
+spec:
+  selector:
+    app: kiransaket-backend
+  ports:
+    -  port: 80
+       targetPort: 5000
+  
